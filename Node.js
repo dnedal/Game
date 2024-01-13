@@ -66,3 +66,36 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+const ws = new WebSocket('ws://localhost:3000');
+let playerNumber = null;
+const launchButton = document.getElementById('launch');
+const holdButton = document.getElementById('hold');
+const resultDiv = document.getElementById('result');
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    switch (data.type) {
+        case 'connected':
+            playerNumber = data.playerNumber;
+            console.log('Connected as Player ' + playerNumber);
+            break;
+        case 'result':
+            resultDiv.textContent = 'Result: ' + data.result;
+            break;
+        case 'reset':
+            resultDiv.textContent = '';
+            break;
+        case 'error':
+            resultDiv.textContent = 'Error: ' + data.message;
+            break;
+    }
+};
+
+function sendChoice(choice) {
+    const message = { playerNumber: playerNumber, choice: choice };
+    ws.send(JSON.stringify(message));
+}
+
+launchButton.addEventListener('click', () => sendChoice('Launch'));
+holdButton.addEventListener('click', () => sendChoice('Hold'));
