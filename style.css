@@ -1,0 +1,74 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+#game-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+#prize-section, #cost-section, #capability-section, #proposal-section {
+    margin-bottom: 20px;
+}
+
+#prize-cards, #cost-card, #player1-card, #player2-card {
+    padding: 10px;
+    min-height: 100px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* General Style for Card Sections */
+.card-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for Individual Card Images */
+.card-image {
+    width: 120px; /* Adjust based on your preference */
+    height: auto;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design for Smaller Screens */
+@media (max-width: 768px) {
+    .card-image {
+        width: 100px; /* Slightly smaller on tablet screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .card-image {
+        width: 80px; /* Even smaller on mobile screens */
+    }
+}
+
+
+
+#proposal-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#prize-slider {
+    margin: 0 10px;
+}

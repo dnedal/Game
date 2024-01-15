@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="prize-section">
+            <h2>Prize Cards</h2>
+            <div id="prize-cards"></div>
+            <div id="prize-value"></div>
+        </div>
+        <div id="cost-section">
+            <h2>Cost of War</h2>
+            <div id="cost-card"></div>
+        </div>
+        <div id="capability-section">
+            <h2>Player Capabilities</h2>
+            <div id="player1-card"></div>
+            <div id="player2-card"></div>
+        </div>
+        <div id="proposal-section">
+            <h2>Player 1 Proposal</h2>
+            <input type="range" id="prize-slider" min="0" max="100" value="50">
+            <button id="propose-button">Propose</button>
+            <div id="proposal-value"></div>
+        </div>
+        <button id="draw-button">Draw Cards</button>
+        <div id="result-section"></div>
+    </div>
+    <script src="deterministic_script.js"></script>
+</body>
+</html>
