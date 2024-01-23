@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    Gaming War Version 2.0: Perfect Information About Capabilities, Asymmetric information about cost of war
+    <button id="instructionsButton">Instructions/Rules</button>
+<div id="popupWindow" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <p><h1>Perfect Information About Capabilities, Asymmetric information about cost of war</h1>
+<p>- Capability Reveal: Each player draws and reveals one card face up.<br>
+- Pie Reveal: Draw and place two cards face up between the players.<br>
+- Asymmetric information about cost: Draw one additional card, the "cost of war". Player 2 knows the cost. Player 1 only learns the cost after player 2 decides.<br>
+- Proposal: Player 1 proposes a division of the pie. If player 2 accepts the division, each player receives the proposed share of the piece and war is averted.<br>
+- Battlefield Resolution: If no agreement is reached, players go to war. The player with the higher card wins the entire pie. Draws go to player 2, the “defender”. Both players subtract the known cost of war. 
+<br>Note: Player 2 is programmed to maximize their absolute gains.
+</p>
+    </div>
+</div>
+    <div id="game-container">
+        <div id="roundCounterDisplay">Round: 1</div>
+         <button id="draw-button">Draw Cards</button>
+        <div id="prize-section">
+            <h2>Prize Cards</h2>
+            <div id="prize-cards"></div>
+            <div id="prize-value"></div>
+        </div>
+        <div id="cost-section">
+            <h2>Cost of War</h2>
+            <div id="cost-card"></div>
+        </div>
+        <div id="capability-section">
+            <h2>Player Capabilities</h2>
+            <div id="player1-card"></div>
+            <div id="player2-card"></div>
+        </div>
+        <div id="proposal-section">
+            <h2>Player 1 Proposal</h2>
+            <input type="range" id="prize-slider" min="0" max="100" value="50">
+            <div id="proposal-value"></div>
+        </div>
+        <button id="propose-button">Propose</button>
+        <div id="result-section"></div>
+    </div>
+    <script src="version2.js"></script>
+</body>
+</html>
