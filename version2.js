@@ -179,7 +179,7 @@ function makeDecision(offer, prize, cost, player2Cap, player1Cap) {
 function goWar(offer, player2Cap, player1Cap, prize, cost) {
     outcome = 'War'; // Setting outcome to War
     if (player2Cap >= player1Cap) {
-        updateAndDisplayPayoffs(prize - cost, 0-cost);
+        updateAndDisplayPayoffs(0-cost, prize-cost);
         return `Player 2 rejects the offer and chooses to fight! Player 2 wins the war! Player 2 gets ${prize - cost} points. Player 1 loses ${cost} points.`;
     } else if (player1Cap > player2Cap) {
                 updateAndDisplayPayoffs(0-cost, prize - cost);

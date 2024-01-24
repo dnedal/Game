@@ -69,7 +69,8 @@ const slider = document.getElementById('prize-slider');
     slider.after(sliderValueDisplay); // Place the display right after the slider
 const resultSection = document.getElementById('result-section');
 
-
+let player1Points = 30;
+let player2Points = 30;
 let prizeValue = 0;
 let costOfWar = 0;
 let player1Capability = 0;
@@ -81,8 +82,6 @@ let gameOutcomes = [];
 let gameData = [];
 
 drawButton.addEventListener('click', () => {
-    roundCounter++;
-    roundCounterDisplay.innerHTML = `Round: ${roundCounter}`;
     // Draw prize cards
     const card1 = deck.draw();
     const card2 = deck.draw();
@@ -103,6 +102,7 @@ drawButton.addEventListener('click', () => {
     // Draw cost of war card
     const costCard = deck.draw();
     costOfWar = costCard.getCardNumericValue();
+    costSection.style.visibility = 'hidden'; // Hide the cost section
 
     // Clear existing content and set class for costSection
     costSection.innerHTML = '';
@@ -136,7 +136,7 @@ drawButton.addEventListener('click', () => {
     slider.max = prizeValue;
     slider.value = prizeValue / 2;
 
-     drawButton.disabled = true;
+    drawButton.disabled = true;
     proposeButton.disabled = false;
 
 });
@@ -154,6 +154,8 @@ proposeButton.addEventListener('click', () => {
     const player1Offer = slider.value;
     const player2Decision = makeDecision(player1Offer, prizeValue, costOfWar, player2Capability, player1Capability);
     resultSection.innerHTML = player2Decision;
+    costSection.style.visibility = 'visible'; // Show the cost section
+    
 
     // Register and display the outcome
     registerOutcome(resultSection.innerHTML);
@@ -185,28 +187,46 @@ function goWar(offer, player2Cap, player1Cap, prize, cost) {
     }
 }
 
-function updateAndDisplayPayoffs(player1Points, player2Points) {
-    player1payoff = player1Points;
-    player2payoff = player2Points;
+function updateAndDisplayPayoffs(player1payoff, player2payoff) {
+    player1Points += parseInt(player1payoff);
+    player2Points += parseInt(player2payoff);
     
-    registerValues(); // Call this function to update the displayed values
+    checkWinLoseCondition();  // Check for win/lose conditions after updating points
+
+
+    registerValues(player1payoff, player2payoff); // Call this function to update the displayed values
+}
+
+function checkWinLoseCondition(player1payoff, player2payoff) {
+    if (player1Points >= 100) {
+        endGame("Player 1 has become a superpower and wins the game!");
+    } else if (player2Points >= 100) {
+        endGame("Player 2 has become a superpower and wins the game!");
+    } else if (player1Points <= 0) {
+        endGame("Player 1 is knocked out. Player 2 wins!");
+    } else if (player2Points <= 0) {
+        endGame("Player 2 is knocked out. Player 1 wins!");
+    }
 }
 
 // New Function to Register and Display Numerical Values
-function registerValues() {
+function registerValues(player1payoff, player2payoff) {
     const valuesContainer = document.createElement('div');
     valuesContainer.id = 'values-container';
     valuesContainer.innerHTML = `
         <h3>Numerical Values</h3>
+        <p>Round: ${roundCounter}</p>
         <p>Prize Value: ${prizeValue}</p>
         <p>Cost of War: ${costOfWar}</p>
         <p>Player 1 Capability: ${player1Capability}</p>
         <p>Player 2 Capability: ${player2Capability}</p>
         <p>Outcome: ${outcome}</p>
         <p>Offer: ${slider.value}</p>
-        <p>Player 1 Payoff: ${player1payoff}</p>
-        <p>Player 2 Payoff: ${player2payoff}</p>
+        <p>Player 1 Points: ${player1Points}</p>
+        <p>Player 2 Points: ${player2Points}</p>
     `;
+        roundCounter++;
+    roundCounterDisplay.innerHTML = `Round: ${roundCounter}`;
     document.getElementById('game-container').appendChild(valuesContainer);
     
      const payoffContainer = document.getElementById('payoff-container') || document.createElement('div');
@@ -226,6 +246,9 @@ gameData.push({
         player2Capability: player2Capability,
         player1payoff: player1payoff,
         player2payoff: player2payoff,
+        player1Points: player1Points,
+        player2Points: player2Points,
+
         outcome: outcome
     });
 
@@ -237,6 +260,16 @@ function registerOutcome(outcomeMessage) {
     gameData.push({ type: 'Outcome', detail: outcomeMessage });
 }
 
+function endGame(message) {
+    alert(message); // Display win/lose message
+    // Disable game controls to prevent further play
+    drawButton.disabled = true;
+    proposeButton.disabled = true;
+    slider.disabled = true;
+    convertDataToCSV();
+    // Additional code to handle game end scenario
+}
+
 function convertDataToCSV() {
     let csvContent = "data:text/csv;charset=utf-8," 
         + gameData.map(e => {
@@ -246,7 +279,7 @@ function convertDataToCSV() {
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "game_data.csv");
+    link.setAttribute("download", "gamingwar_v3_results.csv");
     document.body.appendChild(link);
 
     link.click();
