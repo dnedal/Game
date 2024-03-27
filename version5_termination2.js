@@ -83,6 +83,7 @@ let outcome = [];
 let gameOutcomes = [];
 let gameData = [];
 let warCosts = []; // To track cumulative war costs
+let consecutiveCeaseFires = 0;
 
 
 drawButton.addEventListener('click', () => {
@@ -183,6 +184,7 @@ fightButton.addEventListener('click', () => {
 });
 
 function handleRetreat() {
+    consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight
     const concession = prizeValue / 2; // Player 1 concedes half the prize to Player 2
     player2Points += concession; // Update Player 2's points
     // Player 1 does not incur the cost of war
@@ -203,6 +205,7 @@ function handleRetreat() {
 
 function handleFight() {
     let winMessage;
+    consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight
     if (player2Capability >= player1Capability) {
         // Player 1 loses the fight
         player1Points - costOfWar; // Player 1 pays the cumulative cost
@@ -211,7 +214,6 @@ function handleFight() {
         winMessage = `Player 1 chose to fight and lost the battle! Player 2 gets ${prizeValue - costOfWar} points. Player 1 loses ${costOfWar} points.`;
         updateAndDisplayPayoffs(-costOfWar, prizeValue - costOfWar);
         updateMarkerPosition();
-
 
     } else {
         // Player 1 wins the fight
@@ -269,9 +271,12 @@ function makeDecision(offer, prize, cumulativeCost, player2Cap, player1Cap) {
             outcome = 'Cease-fire'; // Setting outcome to cease-fire
             updateAndDisplayPayoffs(prize - offer, offer);
                             updateMarkerPosition();
+                            consecutiveCeaseFires++; // Increment the cease-fire counter
+            checkForStalemate(); // Check if this cease-fire leads to a stalemate
             return `Cease-fire achieved. Player 1 gains ${prize - offer}, Player 2 gains ${offer}. Cumulative cost of ${cumulativeCost} avoided...for now!`;
         } else {
             // If the offer is not acceptable, go to war
+            consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight
             return goWar(player1Cap, player2Cap, prize, cumulativeCost);
         }
     }
@@ -400,6 +405,12 @@ function endGame(message) {
     slider.disabled = true;
     convertDataToCSV();
     // Additional code to handle game end scenario
+}
+
+function checkForStalemate() {
+    if (consecutiveCeaseFires >= 3) {
+        endGame("Three consecutive cease-fires have turned to an uneasy armistice, effectively ending the war...for now!");
+    }
 }
 
 function convertDataToCSV() {
