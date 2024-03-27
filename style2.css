@@ -58,8 +58,8 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin: 5px;
-    padding: 5px;
+    margin: 2px;
+    padding: 2px;
     background-color: #f9f9f9;
     border-radius: 10px;
     border: 1px solid #ddd;
@@ -68,7 +68,7 @@ body {
 
 /* Style for Individual Card Images */
 .card-image {
-    width: 100px; /* Adjust based on your preference */
+    width: 60px; /* Adjust based on your preference */
     height: auto;
     margin: 1px;
     border: 1px solid #ccc;
@@ -79,13 +79,13 @@ body {
 /* Responsive Design for Smaller Screens */
 @media (max-width: 768px) {
     .card-image {
-        width: 80px; /* Slightly smaller on tablet screens */
+        width: 50px; /* Slightly smaller on tablet screens */
     }
 }
 
 @media (max-width: 480px) {
     .card-image {
-        width: 50px; /* Even smaller on mobile screens */
+        width: 40px; /* Even smaller on mobile screens */
     }
 }
 
