@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Game</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+    Gaming War Version 5.0: Korean War termination game.
+    <button id="instructionsButton">Instructions/Rules</button>
+<div id="popupWindow" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <p><h1>War termination game. Cumulative costs </h1>
+<p>- The player is representing the US-led United Nations forces intervening against communist invasion of South Korea. The game begins on September 1950 with the famed Incheon landing.
+- Both sides start the game with 30 points each. Earning/losing points moves the game marker North/South as the balance of points between North and South shifts.<br>
+-If Player 1 reaches the Yalu river (a point gap of 100 or more), forcing the North Korean forces to sue for peace. If player 1 loses all their points they become unable to continue fighting and sue for peace. If player 2 reaches the Jeju strait (a 100 point gap in their favor), they manage to expel US forces from the peninsula and win the war.<br>
+Game steps:<br>
+- Draw and place two cards face up between the players. This determines the prize at steak at each round of the game<br>
+- Capability Reveal: Each player draws and reveals one card face up. This represents the relative capabilities in a given round. <br>
+- Asymmetric information about cost: Draw one additional card, the "cost of war". Player 2 knows the cost. Player 1 only learns the cost after player 2 decides. These costs <i>accumulate</i> over each round.<br>
+- Decision time: Player 1 must decide whether to fight, retreat, or propose a cease-fire.<br>
+- Fight: whomever has the highest capability card wins the battle. Draws go to P2. The victor reaps the spoils (takes the whole prize). Both players pay the cumulative cost of fighting.
+- Retreat: If player 1 retreats, player 2 receives half of the prize. Neither state pays the costs of war.
+- Cease-fire: Player 1 proposes a cease-fire, offering a division of the prize. If player 2 accepts the division, each player receives the proposed share of the prize and fighting is averted--temporarily. If player 2 refused the division, fighting resumes and is settled the same way as above.
+- If players reach three consecutive cease-fires the war is terminated as a stalemate.
+<br>
+</p>
+    </div>
+</div>
+ <div class="layout-container">
+    <div id="game-container">
+        <div id="roundCounterDisplay">Round: 1</div>
+         <button id="draw-button">Draw Cards</button>
+        <div id="prize-section">
+            <h2>Prize Cards</h2>
+            <div id="prize-cards"></div>
+            <div id="prize-value"></div>
+        </div>
+        <div id="cost-section">
+            <h2>Cumulative Cost of War</h2>
+            <div id="cost-card"></div>
+        </div>
+        <div id="capability-section">
+            <h2>Player Capabilities</h2>
+           Player 1 <div id="player1-card"></div>
+           Player 2 <div id="player2-card"></div>
+        </div>
+        <div id="p1decision-section">
+            Fight, Retreat, or Propose Cease-Fire
+            <button id="fight-button" disabled>Fight!</button>
+            <button id="retreat-button" disabled>Retreat!</button>
+        </div>
+        <div id="proposal-section">
+            <h2>Make a cease-fire proposal</h2>
+            <input type="range" id="prize-slider" min="0" max="100" value="50">
+            <div id="proposal-value"></div>
+        </div>
+        <button id="propose-button">Propose</button>
+        <div id="result-section"></div>
+    </div>
+<div id="map-container">
+    <div id="marker"></div>
+</div>
+</div>
+    <script src="version5_termination2.js"></script>
+</body>
+</html>
