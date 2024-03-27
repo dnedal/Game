@@ -23,14 +23,14 @@ body {
 
 
 #prize-section, #cost-section, #capability-section, #proposal-section {
-    margin-bottom: 20px;
+    margin-bottom:10px;
 }
 
 #prize-cards, #cost-card, #player1-card, #player2-card {
-    padding: 5px;
+    padding: 2px;
     min-height: 100px;
     display: inline-block;
-    margin-right: 5px;
+    margin-right: 2px;
 }
 
 #map-container {
