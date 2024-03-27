@@ -68,7 +68,7 @@ body {
 
 /* Style for Individual Card Images */
 .card-image {
-    width: 65px; /* Adjust based on your preference */
+    width: 80px; /* Adjust based on your preference */
     height: auto;
     margin: .5px;
     border: .5px solid #ccc;
@@ -151,6 +151,7 @@ margin: auto;
 padding: 20px;
 border: 1px solid #888;
 width: 80%;
+align;
 max-width: 600px; /* Adjust as needed */
 }
 
