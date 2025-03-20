@@ -187,6 +187,7 @@ function handleRetreat() {
     // Player 1 does not incur the cost of war
     costSection.style.visibility = 'visible'; // Optionally show the costs to indicate they were avoided
     outcome = 'Retreat'; // Set the outcome
+    player1Offer = 0;
     resultSection.innerHTML = `Player 1 retreats. Player 2 gains ${prizeValue/2} points. Cumulative cost was avoided.`;
     registerOutcome(resultSection.innerHTML);
     drawButton.disabled = false;
@@ -301,8 +302,8 @@ function resetAndDisplayPrizeSection(card1, card2) {
 
 
 function updateAndDisplayPayoffs(player1payoff, player2payoff) {
-    player1Points += parseInt(player1payoff);
-    player2Points += parseInt(player2payoff);
+    player1Points += player1payoff;
+    player2Points += player2payoff;
     
     checkWinLoseCondition();  // Check for win/lose conditions after updating points
 
