@@ -183,19 +183,18 @@ fightButton.addEventListener('click', () => {
 });
 
 function handleRetreat() {
-    consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight
-    let concession = prizeValue / 2; // Player 1 concedes half the prize to Player 2
-    player2Points += concession; // Update Player 2's points
+    consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight // Player 1 concedes half the prize to Player 2
+    player2Points += prize Value/2; // Update Player 2's points
     // Player 1 does not incur the cost of war
     costSection.style.visibility = 'visible'; // Optionally show the costs to indicate they were avoided
     outcome = 'Retreat'; // Set the outcome
-    resultSection.innerHTML = `Player 1 retreats. Player 2 gains ${concession} points. Cumulative cost was avoided.`;
+    resultSection.innerHTML = `Player 1 retreats. Player 2 gains ${prizeValue/2} points. Cumulative cost was avoided.`;
     registerOutcome(resultSection.innerHTML);
     drawButton.disabled = false;
     proposeButton.disabled = true;
     retreatButton.disabled = true;
     fightButton.disabled = true;
-    updateAndDisplayPayoffs(0, concession); // Update payoffs accordingly
+    updateAndDisplayPayoffs(0, prizeValue/2); // Update payoffs accordingly
     checkWinLoseCondition();
     updateMarkerPosition();
 
@@ -363,7 +362,6 @@ gameData.push({
         player2payoff: player2payoff,
         player1Points: player1Points,
         player2Points: player2Points,
-
         outcome: outcome
     });
 
