@@ -184,7 +184,7 @@ fightButton.addEventListener('click', () => {
 
 function handleRetreat() {
     consecutiveCeaseFires = 0; // Reset the counter if the decision is to fight // Player 1 concedes half the prize to Player 2
-    player2Points += prize Value/2; // Update Player 2's points
+    player2Points += prizeValue/2; // Update Player 2's points
     // Player 1 does not incur the cost of war
     costSection.style.visibility = 'visible'; // Optionally show the costs to indicate they were avoided
     outcome = 'Retreat'; // Set the outcome
