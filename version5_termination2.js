@@ -188,6 +188,7 @@ function handleRetreat() {
     costSection.style.visibility = 'visible'; // Optionally show the costs to indicate they were avoided
     outcome = 'Retreat'; // Set the outcome
     player1Offer = 0;
+    slider.value = 0;
     resultSection.innerHTML = `Player 1 retreats. Player 2 gains ${prizeValue/2} points. Cumulative cost was avoided.`;
     registerOutcome(resultSection.innerHTML);
     drawButton.disabled = false;
