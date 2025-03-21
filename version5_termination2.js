@@ -243,7 +243,7 @@ function handleFight() {
 
 
 proposeButton.addEventListener('click', () => {
-    const player1Offer = slider.value;
+    const player1Offer = Number(slider.value);
     const player2Decision = makeDecision(player1Offer, prizeValue, costOfWar, player2Capability, player1Capability);
     resultSection.innerHTML = player2Decision;
     costSection.style.visibility = 'visible'; // Show the cost section
