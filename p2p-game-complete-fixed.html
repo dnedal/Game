@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Bargaining Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        #game-container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        #connection-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-radius: 5px;
+        }
+
+        #game-content {
+            display: none;
+        }
+
+        #prize-section,
+        #cost-section,
+        #capability-section,
+        #proposal-section {
+            margin-bottom: 20px;
+        }
+
+        #capability-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #capability-section h2 {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #capability-section > div {
+            margin: 0 15px;
+        }
+
+        #player1-card,
+        #player2-card {
+            padding: 5px;
+            min-height: 100px;
+        }
+
+        .card-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            width: 100px;
+            height: auto;
+            margin: 1px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .card-image {
+                width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-image {
+                width: 50px;
+            }
+        }
+
+        #proposal-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #proposal-section h2 {
+            margin-right: 20px;
+        }
+
+        #prize-slider {
+            margin: 0 10px;
+        }
+
+        #slider-value {
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        button:disabled {
+            color: #999;
+            background-color: #ddd;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        button {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        #waiting-screen {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #player-role {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #e0f7fa;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #opponent-decision {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        #chat-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #chat-messages {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        #chat-input {
+            width: 80%;
+            padding: 5px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>P2P Bargaining Game</h1>
+    <button id="instructionsButton">Instructions/Rules</button>
+    
+    <div id="popupWindow" class="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h1>Bargaining with Perfect Information</h1>
+            <p>This is a peer-to-peer game where two players negotiate over a prize.</p>
+            <p><strong>How to play:</strong></p>
+            <ul>
+                <li>One player creates a room and shares the room ID with another player</li>
+                <li>The second player joins using that room ID</li>
+                <li>Once connected, Player 1 draws cards to start the game</li>
+                <li>The cards reveal: the prize value, cost of war, and each player's capabilities</li>
+                <li>Player 1 proposes a division of the prize</li>
+                <li>Player 2 can accept (peaceful outcome) or reject (war)</li>
+                <li>In war, the player with the higher capability card wins the entire prize minus the cost of war</li>
+                <li>If capability cards are equal, Player 2 (defender) wins</li>
+            </ul>
+            <p>Negotiate wisely and consider the cost of conflict!</p>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div id="connection-container">
+            <h2>Connection Setup</h2>
+            <div id="create-room">
+                <button id="create-button">Create Game Room</button>
+                <div id="room-created" class="hidden">
+                    <p>Room created! Share this ID with your opponent:</p>
+                    <input type="text" id="room-id" readonly>
+                    <button id="copy-room-id">Copy</button>
+                </div>
+            </div>
+
+            <div id="join-room">
+                <input type="text" id="room-id-input" placeholder="Enter Room ID">
+                <button id="join-button">Join Game</button>
+            </div>
+
+            <div id="status">Not connected</div>
+            
+            <div id="waiting-screen" class="hidden">
+                <p>Waiting for opponent to join...</p>
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <div id="game-content" class="hidden">
+            <div id="player-role"></div>
+            <div id="roundCounterDisplay">Round: 1</div>
+            <div id="player1-controls" class="hidden">
+                <button id="draw-button">Draw Cards</button>
+            </div>
+            
+            <div id="prize-section">
+                <h2>Prize Cards</h2>
+                <div id="prize-cards" class="card-section"></div>
+                <div id="prize-value"></div>
+            </div>
+            
+            <div id="cost-section">
+                <h2>Cost of War</h2>
+                <div id="cost-card" class="card-section"></div>
+            </div>
+            
+            <div id="capability-section">
+                <div> 
+                    <h3>Your Capability</h3>
+                    <div id="player1-card" class="card-section"></div>
+                </div>
+                <div>
+                    <h3>Opponent Capability</h3>
+                    <div id="player2-card" class="card-section"></div>
+                </div>
+            </div>
+            
+            <div id="player1-proposal-controls" class="hidden">
+                <div id="proposal-section">
+                    <h2>Your Proposal</h2>
+                    <input type="range" id="prize-slider" min="0" max="100" value="50">
+                    <div id="slider-value"></div>
+                </div>
+                <button id="propose-button">Propose Division</button>
+            </div>
+            
+            <div id="player2-decision-controls" class="hidden">
+                <h2>Opponent's Proposal</h2>
+                <div id="proposal-display"></div>
+                <button id="accept-button">Accept</button>
+                <button id="reject-button">Reject & Fight</button>
+            </div>
+            
+            <div id="opponent-decision" class="hidden"></div>
+            <div id="result-section"></div>
+            <div id="payoff-container"></div>
+            
+            <div id="next-round-controls" class="hidden">
+                <button id="next-round-button">Next Round</button>
+            </div>
+            
+            <div id="chat-container" class="hidden">
+                <h3>Game Chat</h3>
+                <div id="chat-messages"></div>
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button id="send-chat">Send</button>
+            </div>
+        </div>
+        
+        <button id="export-button" class="hidden">Export Game Data as CSV</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+    <script>
+        // Card and Deck Classes
+        class Card {
+            constructor(suit, value) {
+                this.suit = suit;
+                this.value = value;
+            }
+
+            get imagePath() {
+                return `${this.value}_of_${this.suit}.png`;
+            }
+
+            getCardNumericValue() {
+                if (this.value === 'ace') return 1;
+                if (this.value === 'jack') return 11;
+                if (this.value === 'queen') return 12;
+                if (this.value === 'king') return 13;
+                return parseInt(this.value);
+            }
+        }
+
+        class Deck {
+            constructor() {
+                this.deck = [];
+                this.reset();
+            }
+
+            reset() {
+                const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+                const values = ['ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king'];
+                this.deck = [];
+                for (let suit of suits) {
+                    for (let value of values) {
+                        this.deck.push(new Card(suit, value));
+                    }
+                }
+                this.shuffle();
+            }
+
+            shuffle() {
+                for (let i = this.deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
+                }
+            }
+
+            draw() {
+                if (this.deck.length === 0) {
+                    this.reset();
+                }
+                return this.deck.pop();
+            }
+        }
+
+        // Game State
+        let deck = new Deck();
+        let prizeValue = 0;
+        let costOfWar = 0;
+        let player1Capability = 0;
+        let player2Capability = 0;
+        let player1payoff = 0;
+        let player2payoff = 0;
+        let roundCounter = 1;
+        let gameOutcomes = [];
+        let gameData = [];
+        let outcome = '';
+        let playerRole = null;
+        let currentProposal = 0;
+        let seed = Date.now();
+
+        // P2P Connection
+        let peer = null;
+        let conn = null;
+        let isHost = false;
+
+        // DOM Elements
+        const createButton = document.getElementById('create-button');
+        const joinButton = document.getElementById('join-button');
+        const roomIdInput = document.getElementById('room-id-input');
+        const roomIdDisplay = document.getElementById('room-id');
+        const roomCreatedDiv = document.getElementById('room-created');
+        const copyRoomIdButton = document.getElementById('copy-room-id');
+        const statusDiv = document.getElementById('status');
+        const waitingScreen = document.getElementById('waiting-screen');
+        const gameContent = document.getElementById('game-content');
+        const connectionContainer = document.getElementById('connection-container');
+        const playerRoleDisplay = document.getElementById('player-role');
+        
+        const player1Controls = document.getElementById('player1-controls');
+        const player1ProposalControls = document.getElementById('player1-proposal-controls');
+        const player2DecisionControls = document.getElementById('player2-decision-controls');
+        const opponentDecision = document.getElementById('opponent-decision');
+        const nextRoundControls = document.getElementById('next-round-controls');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const sendChatButton = document.getElementById('send-chat');
+        const exportButton = document.getElementById('export-button');
+        
+        const drawButton = document.getElementById('draw-button');
+        const proposeButton = document.getElementById('propose-button');
+        const acceptButton = document.getElementById('accept-button');
+        const rejectButton = document.getElementById('reject-button');
+        const nextRoundButton = document.getElementById('next-round-button');
+        
+        const prizeSection = document.getElementById('prize-cards');
+        const costSection = document.getElementById('cost-card');
+        const player1Section = document.getElementById('player1-card');
+        const player2Section = document.getElementById('player2-card');
+        const prizeValueDisplay = document.getElementById('prize-value');
+        const proposalDisplay = document.getElementById('proposal-display');
+        const resultSection = document.getElementById('result-section');
+        const payoffContainer = document.getElementById('payoff-container');
+        const roundCounterDisplay = document.getElementById('roundCounterDisplay');
+        
+        const slider = document.getElementById('prize-slider');
+        const sliderValueDisplay = document.getElementById('slider-value');
+        
+        const instructionsButton = document.getElementById('instructionsButton');
+        const popupWindow = document.getElementById('popupWindow');
+        const closeButton = document.querySelector('.close');
+
+        // Initialize PeerJS connection
+        function initializePeer() {
+            peer = new Peer(null, {
+                debug: 2
+            });
+            
+            peer.on('open', (id) => {
+                console.log('My peer ID is: ' + id);
+            });
+            
+            peer.on('error', (err) => {
+                console.error('PeerJS error:', err);
+                statusDiv.textContent = "Connection error: " + err.type;
+                statusDiv.style.color = 'red';
+            });
+        }
+
+        // Create a new game room
+        createButton.addEventListener('click', () => {
+            initializePeer();
+            
+            peer.on('open', (id) => {
+                roomIdDisplay.value = id;
+                roomCreatedDiv.classList.remove('hidden');
+                statusDiv.textContent = 'Room created. Waiting for opponent...';
+                waitingScreen.classList.remove('hidden');
+                createButton.disabled = true;
+                joinButton.disabled = true;
+                isHost = true;
+            });
+            
+            peer.on('connection', (connection) => {
+                conn = connection;
+                setupConnectionHandlers();
+                waitingScreen.classList.add('hidden');
+                connectionContainer.classList.add('hidden');
+                gameContent.classList.remove('hidden');
+                chatContainer.classList.remove('hidden');
+                exportButton.classList.remove('hidden');
+                
+                playerRole = 'player1';
+                playerRoleDisplay.textContent = 'You are Player 1 (Proposer)';
+                player1Controls.classList.remove('hidden');
+                
+                statusDiv.textContent = 'Connected to opponent!';
+                statusDiv.style.color = 'green';
+                
+                // Send initial game state
+                sendGameState();
+            });
+        });
+
+        // Join an existing game room
+        joinButton.addEventListener('click', () => {
+            const roomId = roomIdInput.value.trim();
+            if (!roomId) {
+                alert('Please enter a valid Room ID');
+                return;
+            }
+            
+            initializePeer();
+            
+            peer.on('open', (id) => {
+                conn = peer.connect(roomId);
+                setupConnectionHandlers();
+                
+                conn.on('open', () => {
+                    statusDiv.textContent = 'Connected to room!';
+                    statusDiv.style.color = 'green';
+                    connectionContainer.classList.add('hidden');
+                    gameContent.classList.remove('hidden');
+                    chatContainer.classList.remove('hidden');
+                    exportButton.classList.remove('hidden');
+                    
+                    playerRole = 'player2';
+                    playerRoleDisplay.textContent = 'You are Player 2 (Responder)';
+                    
+                    // Send ready message
+                    conn.send({
+                        type: 'ready'
+                    });
+                });
+            });
+        });
+
+        // Copy room ID to clipboard
+        copyRoomIdButton.addEventListener('click', () => {
+            roomIdDisplay.select();
+            document.execCommand('copy');
+            alert('Room ID copied to clipboard!');
+        });
+
+        // Setup connection event handlers
+        function setupConnectionHandlers() {
+            conn.on('data', handleDataReceived);
+            
+            conn.on('close', () => {
+                statusDiv.textContent = 'Connection closed';
+                statusDiv.style.color = 'red';
+                alert('Your opponent has disconnected.');
+                resetGameInterface();
+            });
+            
+            conn.on('error', (err) => {
+                console.error('Connection error:', err);
+                statusDiv.textContent = "Connection error: " + err;
+                statusDiv.style.color = 'red';
+            });
+        }
+
+        // Handle incoming data
+        function handleDataReceived(data) {
+            console.log('Received data:', data);
+            
+            switch (data.type) {
+                case 'ready':
+                    // Opponent is ready
+                    break;
+                    
+                case 'gameState':
+                    updateGameState(data);
+                    break;
+                    
+                case 'drawCards':
+                    handleDrawCards(data);
+                    break;
+                    
+                case 'proposal':
+                    handleProposal(data);
+                    break;
+                    
+                case 'decision':
+                    handleDecision(data);
+                    break;
+                    
+                case 'nextRound':
+                    handleNextRound();
+                    break;
+                    
+                case 'chat':
+                    addChatMessage('Opponent', data.message);
+                    break;
+            }
+        }
+
+        // Send game state to peer
+        function sendGameState() {
+            if (!conn) return;
+            
+            conn.send({
+                type: 'gameState',
+                roundCounter: roundCounter,
+                playerRole: playerRole === 'player1' ? 'player2' : 'player1'
+            });
+        }
+
+        // Update game state from received data
+        function updateGameState(data) {
+            roundCounter = data.roundCounter;
+            roundCounterDisplay.textContent = "Round: " + roundCounter;
+        }
+
+        // Draw Button Handler
+        drawButton.addEventListener('click', () => {
+            if (playerRole !== 'player1') return;
+            
+            // Generate seed for synchronized random
+            seed = Date.now();
+            
+            // Draw cards
+            const drawnCards = drawCards();
+            
+            // Display cards
+            displayCards(drawnCards);
+            
+            // Send card data to other player
+            conn.send({
+                type: 'drawCards',
+                cards: drawnCards,
+                seed: seed
+            });
+            
+            // Update UI
+            drawButton.disabled = true;
+            player1ProposalControls.classList.remove('hidden');
+        });
+
+        // Handle received draw cards data
+        function handleDrawCards(data) {
+            // Set the seed for synchronized random
+            seed = data.seed;
+            
+            // Display the cards
+            displayCards(data.cards);
+        }
+
+        // Draw cards
+        function drawCards() {
+            // Reset deck with seed
+            deck = new Deck();
+            // Note: Using Math.random as seedrandom may not be available
+            deck.shuffle();
+            
+            // Draw prize cards
+            const prizeCard1 = deck.draw();
+            const prizeCard2 = deck.draw();
+            
+            // Draw cost card
+            const costCard = deck.draw();
+            
+            // Draw capability cards
+            const player1Card = deck.draw();
+            const player2Card = deck.draw();
+            
+            return {
+                prizeCard1: {
+                    suit: prizeCard1.suit,
+                    value: prizeCard1.value,
+                    numericValue: prizeCard1.getCardNumericValue()
+                },
+                prizeCard2: {
+                    suit: prizeCard2.suit,
+                    value: prizeCard2.value,
+                    numericValue: prizeCard2.getCardNumericValue()
+                },
+                costCard: {
+                    suit: costCard.suit,
+                    value: costCard.value,
+                    numericValue: costCard.getCardNumericValue()
+                },
+                player1Card: {
+                    suit: player1Card.suit,
+                    value: player1Card.value,
+                    numericValue: player1Card.getCardNumericValue()
+                },
+                player2Card: {
+                    suit: player2Card.suit,
+                    value: player2Card.value,
+                    numericValue: player2Card.getCardNumericValue()
+                }
+            };
+        }
+
+        // Display cards on the interface
+        function displayCards(cards) {
+            // Convert data back to Card objects
+            const prizeCard1 = new Card(cards.prizeCard1.suit, cards.prizeCard1.value);
+            const prizeCard2 = new Card(cards.prizeCard2.suit, cards.prizeCard2.value);
+            const costCard = new Card(cards.costCard.suit, cards.costCard.value);
+            const player1Card = new Card(cards.player1Card.suit, cards.player1Card.value);
+            const player2Card = new Card(cards.player2Card.suit, cards.player2Card.value);
+            
+            // Calculate values
+            prizeValue = cards.prizeCard1.numericValue + cards.prizeCard2.numericValue;
+            costOfWar = cards.costCard.numericValue;
+            player1Capability = cards.player1Card.numericValue;
+            player2Capability = cards.player2Card.numericValue;
+            
+            // Clear existing content
+            prizeSection.innerHTML = '';
+            costSection.innerHTML = '';
+            player1Section.innerHTML = '';
+            player2Section.innerHTML = '';
+            
+            // Add card section classes
+            prizeSection.className = 'card-section';
+            costSection.className = 'card-section';
+            player1Section.className = 'card-section';
+            player2Section.className = 'card-section';
+            
+            // Create and append card images
+            prizeSection.appendChild(createCardImage(prizeCard1));
+            prizeSection.appendChild(createCardImage(prizeCard2));
+            costSection.appendChild(createCardImage(costCard));
+            
+            // Display cards based on player role
+            if (playerRole === 'player1') {
+                player1Section.appendChild(createCardImage(player1Card));
+                player2Section.appendChild(createCardImage(player2Card));
+            } else {
+                player1Section.appendChild(createCardImage(player2Card));
+                player2Section.appendChild(createCardImage(player1Card));
+            }
+            
+            // Update displays
+            prizeValueDisplay.innerHTML = "Prize Value: " + prizeValue;
+            
+            // Update slider range
+            slider.min = 0;
+            slider.max = prizeValue;
+            slider.value = Math.floor(prizeValue / 2);
+            updateSliderDisplay();
+        }
+
+        // Helper function to create card image
+        function createCardImage(card) {
+            const img = document.createElement('img');
+            img.src = card.imagePath;
+            img.className = 'card-image';
+            img.alt = card.value + " of " + card.suit;
+            return img;
+        }
+
+        // Update slider display
+        function updateSliderDisplay() {
+            if (playerRole === 'player1') {
+                const player2Value = parseInt(slider.value);
+                const player1Value = prizeValue - player2Value;
+                sliderValueDisplay.textContent = "You: " + player1Value + ", Opponent: " + player2Value;
+            }
+        }
+
+        // Slider input handler
+        slider.addEventListener('input', updateSliderDisplay);
+
+        // Propose button handler
+        proposeButton.addEventListener('click', () => {
+            if (playerRole !== 'player1') return;
+            
+            currentProposal = parseInt(slider.value);
+            
+            // Send proposal to other player
+            conn.send({
+                type: 'proposal',
+                value: currentProposal
+            });
+            
+            // Update UI
+            proposeButton.disabled = true;
+            resultSection.innerHTML = 'Waiting for opponent to respond...';
+        });
+
+        // Handle received proposal
+        function handleProposal(data) {
+            if (playerRole !== 'player2') return;
+            
+            currentProposal = data.value;
+            player2DecisionControls.classList.remove('hidden');
+            
+            // Show proposal to player 2
+            const player1Share = prizeValue - currentProposal;
+            const player2Share = currentProposal;
+            proposalDisplay.innerHTML = "Opponent offers you: " + player2Share + " points (keeping " + player1Share + " points)";
+        }
+
+        // Accept button handler
+        acceptButton.addEventListener('click', () => {
+            if (playerRole !== 'player2') return;
+            
+            // Send acceptance decision
+            conn.send({
+                type: 'decision',
+                accepted: true
+            });
+            
+            // Calculate payoffs
+            const player1Share = prizeValue - currentProposal;
+            const player2Share = currentProposal;
+            
+            // Update and display payoffs
+            player1payoff = player1Share;
+            player2payoff = player2Share;
+            
+            // Update UI
+            handleAcceptedProposal(player1Share, player2Share);
+            
+            // Disable decision buttons
+            acceptButton.disabled = true;
+            rejectButton.disabled = true;
+            player2DecisionControls.classList.add('hidden');
+            nextRoundControls.classList.remove('hidden');
+        });
+
+        // Reject button handler
+        rejectButton.addEventListener('click', () => {
+            if (playerRole !== 'player2') return;
+            
+            // Send rejection decision
+            conn.send({
+                type: 'decision',
+                accepted: false
+            });
+            
+            // Determine war outcome
+            let warResult = '';
+            
+            if (player1Capability > player2Capability) {
+                // Player 1 wins
+                player1payoff = prizeValue - costOfWar;
+                player2payoff = -costOfWar;
+                warResult = "War! You lost. Opponent gets " + (prizeValue - costOfWar) + " points. You lose " + costOfWar + " points.";
+            } else {
+                // Player 2 wins (including ties)
+                player1payoff = -costOfWar;
+                player2payoff = prizeValue - costOfWar;
+                warResult = "War! You won! You get " + (prizeValue - costOfWar) + " points. Opponent loses " + costOfWar + " points.";
+            }
+            
+            // Update UI
+            handleRejectedProposal(warResult);
+            
+            // Disable decision buttons
+            acceptButton.disabled = true;
+            rejectButton.disabled = true;
+            player2DecisionControls.classList.add('hidden');
+            nextRoundControls.classList.remove('hidden');
+        });
+
+        // Handle accepted proposal (for Player 1)
+        function handleAcceptedProposal(player1Share, player2Share) {
+            outcome = 'Peaceful bargain';
+            
+            if (playerRole === 'player1') {
+                resultSection.innerHTML = "Your opponent accepted your proposal.";
+                opponentDecision.textContent = "Peaceful agreement reached!";
+                opponentDecision.classList.remove('hidden');
+                opponentDecision.style.backgroundColor = '#d4edda';
+                
+                payoffContainer.innerHTML = "<p>You receive: " + player1Share + " points</p>" +
+                                          "<p>Opponent receives: " + player2Share + " points</p>";
+            } else {
+                resultSection.innerHTML = "You accepted the proposal.";
+                payoffContainer.innerHTML = "<p>You receive: " + player2Share + " points</p>" +
+                                          "<p>Opponent receives: " + player1Share + " points</p>";
+            }
+            
+            // Register game data
+            registerGameData();
+        }
+
+        // Handle rejected proposal (war outcome)
+        function handleRejectedProposal(warResult) {
+            outcome = 'War';
+            
+            if (playerRole === 'player1') {
+                opponentDecision.text
