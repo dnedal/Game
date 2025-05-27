@@ -151,10 +151,8 @@
             });
             
             peer.on('connection', (connection) => {
-                conn = connection;
-                setupConnectionHandlers();
-                waitingScreen.classList.add('hidden');
-    });
+conn.on('open', () => {                conn = connection;
+setupConnectionHandlers();waitingScreen.classList.add('hidden');connectionContainer.classList.add('hidden');gameContent.classList.remove('hidden');chatContainer.classList.remove('hidden');exportButton.classList.remove('hidden');playerRole = 'player1';playerRoleDisplay.textContent = 'You are Player 1 (Proposer)';player1Controls.classList.remove('hidden');statusDiv.textContent = 'Connected to opponent!';statusDiv.style.color = 'green';sendGameState();});                waitingScreen.classList.add('hidden');
                 connectionContainer.classList.add('hidden');
                 gameContent.classList.remove('hidden');
                 chatContainer.classList.remove('hidden');
@@ -534,7 +532,7 @@
             
             if (playerRole === 'player1') {
                 resultSection.innerHTML = "Your opponent accepted your proposal.";
-                opponentDecision.textContent = "Peaceful agreement reached!";
+                opponentDecision.textContent = warResult;Content = "Peaceful agreement reached!";
                 opponentDecision.classList.remove('hidden');
                 opponentDecision.style.backgroundColor = '#d4edda';
                 
@@ -555,6 +553,6 @@
             outcome = 'War';
             
             if (playerRole === 'player1') {
-                opponentDecision.text
+                opponentDecision.textContent = warResult;
             }
         }
