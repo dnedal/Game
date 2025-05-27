@@ -126,6 +126,8 @@
             });
             
             peer.on('open', (id) => {
+  console.log('My peer ID is: ' + id);
+
                 console.log('My peer ID is: ' + id);
             });
             
@@ -141,6 +143,8 @@
             initializePeer();
             
             peer.on('open', (id) => {
+  console.log('My peer ID is: ' + id);
+
                 roomIdDisplay.value = id;
                 roomCreatedDiv.classList.remove('hidden');
                 statusDiv.textContent = 'Room created. Waiting for opponent...';
@@ -151,6 +155,23 @@
             });
             
             peer.on('connection', (connection) => {
+  conn.on('open', () => {
+    waitingScreen.classList.add('hidden');
+    connectionContainer.classList.add('hidden');
+    gameContent.classList.remove('hidden');
+    chatContainer.classList.remove('hidden');
+    exportButton.classList.remove('hidden');
+
+    playerRole = 'player1';
+    playerRoleDisplay.textContent = 'You are Player 1 (Proposer)';
+    player1Controls.classList.remove('hidden');
+
+    statusDiv.textContent = 'Connected to opponent!';
+    statusDiv.style.color = 'green';
+
+    sendGameState();
+  });
+
                 conn = connection;
                 setupConnectionHandlers();
                 waitingScreen.classList.add('hidden');
@@ -182,6 +203,8 @@
             initializePeer();
             
             peer.on('open', (id) => {
+  console.log('My peer ID is: ' + id);
+
                 conn = peer.connect(roomId);
                 setupConnectionHandlers();
                 
@@ -266,6 +289,11 @@
 
         // Send game state to peer
         function sendGameState() {
+  if (!conn || !conn.open) {
+    console.warn("Connection not open. Delaying game state send.");
+    return;
+  }
+
             if (!conn) return;
             
             conn.send({
